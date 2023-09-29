@@ -1,5 +1,5 @@
 body{
-    background-color: #222E37;
+    background-color: #0F0F0F;
     color: #fff;
 }
 .movieHover{
@@ -9,6 +9,18 @@ body{
     transform: scale(1.03);
     transition: 0.5s;
 }
+#search::placeholder{
+    color: #666;
+}
+.ant-pagination-item-link{
+    color: #fff !important;
+}
+.ant-pagination-item a{
+    color: #fff !important;
+}
+.ant-pagination-item-active{
+    background: #666 !important;
+}
 ::-webkit-scrollbar{
     width: 5px;
     height: 5px;
@@ -16,10 +28,4 @@ body{
 ::-webkit-scrollbar-thumb{
     background-color: #fff;
     border-radius: 5px;
-}
-.ant-input{
-    outline: none;
-    background-color: #222E37;
-    color: #fff;
-    border: none;
 }
