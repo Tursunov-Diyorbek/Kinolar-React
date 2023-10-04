@@ -34,6 +34,10 @@ function App() {
             <Routes>
               <Route path={"/royxatdan-otish"} element={<UserRegistr />} />
               <Route
+                path={"*"}
+                element={<Navigate to={"/royxatdan-otish"} />}
+              ></Route>
+              <Route
                 path={"/"}
                 element={
                   <RequireAuth loginPath={"/kirish"}>
@@ -41,10 +45,6 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route
-                path={"*"}
-                element={<Navigate to={"/royxatdan-otish"} />}
-              ></Route>
               <Route path={"/kirish"} element={<UserLogin />}></Route>
               <Route path={"/:movie"} element={<Movie />}></Route>
               <Route path={"/qidiruv"} element={<SearchMovies />}></Route>

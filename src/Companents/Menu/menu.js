@@ -1,11 +1,13 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Button, Form, Input } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Form, Input, Modal, Typography } from "antd";
 import { ContextSearch } from "../../Contex/context";
 import { useNavigate } from "react-router-dom";
+import { FaRegistered } from "react-icons/fa";
 import axios from "axios";
 
 export const Menu = () => {
-  const { searchMovies, setSearchMovies } = useContext(ContextSearch);
+  const { searchMovies, setSearchMovies, userData, setUserData } =
+    useContext(ContextSearch);
   const [categorys, setCategorys] = useState([]);
   const navigate = useNavigate();
 
@@ -20,9 +22,10 @@ export const Menu = () => {
     setSearchMovies(values.search);
     navigate("/qidiruv");
   };
+
   return (
     <>
-      <div className={"py-8 px-5 w-[300px]"}>
+      <div className={"py-8 px-5 flex justify-between items-center"}>
         <Form onFinish={onSearch}>
           <Form.Item name="search" className={"m-0"}>
             <Input
@@ -32,8 +35,17 @@ export const Menu = () => {
             />
           </Form.Item>
         </Form>
+        <Button
+          onClick={() => {
+            navigate("/royxatdan-otish");
+            localStorage.clear();
+          }}
+          className={"flex items-center text-white gap-2"}
+        >
+          <FaRegistered style={{ color: "#fff" }} /> Register
+        </Button>
       </div>
-      <div className={"mb-10 flex justify-between flex-wrap gap-4 px-5"}>
+      <div className={"mb-10 flex flex-wrap gap-4 px-5"}>
         {categorys.map((item, index) => (
           <Button
             key={index}

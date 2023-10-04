@@ -85,6 +85,7 @@ export const UserRegistr = () => {
                 htmlType={"submit"}
                 type={"primary"}
                 className={"bg-blue-700"}
+                // loading
               >
                 Yuborish
               </Button>

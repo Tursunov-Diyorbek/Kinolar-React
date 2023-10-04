@@ -11,7 +11,7 @@ import {
   BsDownload,
 } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
-import { SlLike } from "react-icons/sl";
+import { FcDislike, FcLike } from "react-icons/fc";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import axios from "axios";
@@ -21,6 +21,11 @@ export const Movie = () => {
   const api = useContext(ContextApi);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [infoFilm, setInfoFilm] = useState("");
+  const [like, setLike] = useState(false);
+  const [form] = Form.useForm();
+
+  let userData = JSON.parse(localStorage.getItem("user"));
 
   // const { data, isLoading, isError, error } = useQuery(["kinolar", id], () =>
   //   api.get(`/kinolar/${id}`),
@@ -76,7 +81,10 @@ export const Movie = () => {
 
       const response = await axios.post(
         `https://kinolaruz.pythonanywhere.com/movies/movies/${filterMovie.id}/reviews-create/`,
-        values,
+        {
+          ...values,
+          full_name: userData.username,
+        },
       );
       success();
       try {
@@ -84,12 +92,22 @@ export const Movie = () => {
           .get(`https://kinolaruz.pythonanywhere.com/movies/${movie}/`)
           .then((res) => setFilterMovie(res?.data))
           .catch((err) => console.log(err));
+        form.resetFields();
       } catch (error) {
         console.error("Serverdan ma'lumotlarni olishda xatolik:", error);
       }
     } catch (error) {
       console.error("Ma'lumotni saqlashda xatolik:", error);
     }
+  };
+
+  const UserLike = async () => {
+    axios
+      .post(
+        `https://kinolaruz.pythonanywhere.com/movies/${filterMovie.id}/like`,
+      )
+      .then((res) => console.log(res));
+    setLike(true);
   };
 
   // if (isLoading)
@@ -137,9 +155,15 @@ export const Movie = () => {
             <div
               className={"flex items-center gap-3  cursor-pointer text-white"}
             >
-              <Typography className={"text-2xl"}>
-                <SlLike style={{ color: "red" }} />
-              </Typography>
+              {like ? (
+                <Typography className={"text-2xl"}>
+                  <FcLike style={{ color: "red" }} onClick={UserLike} />
+                </Typography>
+              ) : (
+                <Typography className={"text-2xl"}>
+                  <FcDislike style={{ color: "red" }} onClick={UserLike} />
+                </Typography>
+              )}
               <Typography className={"text-2xl text-white"}>
                 {filterMovie.num_likes}
               </Typography>
@@ -155,23 +179,32 @@ export const Movie = () => {
                 />
               </div>
               <div className={"ms-3"}>
+                <Typography className={"text-white"}>
+                  <span className={"text-[#a5bbdc] font-bold"}>
+                    Kino nomi:{" "}
+                  </span>
+                  {filterMovie.name}
+                </Typography>
+                <Typography className={"text-white my-1"}>
+                  <span className={"text-[#a5bbdc] font-bold"}>Joylandi: </span>
+                  {filterMovie.created_at?.slice(0, 10)}
+                </Typography>
+                <Typography className={"text-white my-1"}>
+                  <span className={"text-[#a5bbdc] font-bold"}>Yil: </span>{" "}
+                  {filterMovie.movie_year}
+                </Typography>
+                <Typography className={"text-white my-1"}>
+                  <span className={"text-[#a5bbdc] font-bold"}>
+                    Davomiyligi:{" "}
+                  </span>{" "}
+                  {filterMovie.duration}
+                </Typography>
+                <Typography className={"text-white my-1"}>
+                  <span className={"text-[#a5bbdc] font-bold"}>Mamlakat: </span>{" "}
+                  {filterMovie.country}
+                </Typography>
                 <Typography className={"text-white font-bold"}>
-                  Kino nomi: {filterMovie.name}
-                </Typography>
-                <Typography className={"text-white font-bold my-1"}>
-                  Joylandi: {filterMovie.created_at}
-                </Typography>
-                <Typography className={"text-white font-bold my-1"}>
-                  Yil: {filterMovie.movie_year}
-                </Typography>
-                <Typography className={"text-white font-bold my-1"}>
-                  Davomiyligi: {filterMovie.duration}
-                </Typography>
-                <Typography className={"text-white font-bold my-1"}>
-                  Mamlakat: {filterMovie.country}
-                </Typography>
-                <Typography className={"text-white font-bold"}>
-                  Janr:
+                  <span className={"text-[#a5bbdc] font-bold"}>Janr: </span>
                   {filterMovie.category?.map((item, index) => {
                     return (
                       <Button
@@ -187,18 +220,29 @@ export const Movie = () => {
                 </Typography>
               </div>
             </div>
-            <details className={"my-2"}>
-              <summary
-                className={
-                  "font-bold cursor-pointer bg-[#272727] border-2 rounded-2xl inline-block py-3 my-5 px-10"
-                }
-              >
-                Kino tavsifi
-              </summary>
-              <Typography className={"text-white"}>
-                {filterMovie.description}
-              </Typography>
-            </details>
+            {/*<details className={"my-2"}>*/}
+            {/*  <summary*/}
+            {/*    className={*/}
+            {/*      "font-bold cursor-pointer bg-[#272727] border-2 rounded-2xl inline-block py-3 my-5 px-10"*/}
+            {/*    }*/}
+            {/*  >*/}
+            {/*    Kino tavsifi*/}
+            {/*  </summary>*/}
+            {/*  <Typography className={"text-white"}>*/}
+            {/*    {filterMovie.description}*/}
+            {/*  </Typography>*/}
+            {/*</details>*/}
+            <div
+              onClick={() =>
+                infoFilm === "" ? setInfoFilm("active") : setInfoFilm("")
+              }
+              className={"overflow-hidden cursor-pointer mt-5 readmore"}
+              style={{
+                height: infoFilm === "active" ? "auto" : 55,
+              }}
+            >
+              {filterMovie.description}
+            </div>
           </div>
         </Col>
         <Col
@@ -208,26 +252,20 @@ export const Movie = () => {
           className={"bg-[#272727] p-2 my-3"}
           style={{ borderRadius: 5 }}
         >
-          <Form onFinish={saveMessages} className={"w-[100%]"}>
-            <label>
-              <Typography className={"text-white"}>
-                Ismingizni kiriting 📝
-              </Typography>
-              <Form.Item className={"m-0"} name={"full_name"}>
-                <Input
-                  style={{
-                    background: "none",
-                    color: "#fff",
-                    border: "1px solid grey",
-                  }}
-                />
-              </Form.Item>
-            </label>
+          <Form onFinish={saveMessages} className={"w-[100%]"} form={form}>
             <label>
               <Typography className={"text-white mt-2"}>
                 Izohingizni qoldiring 📝
               </Typography>
-              <Form.Item name={"comment"}>
+              <Form.Item
+                name={"comment"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Kechirasiz siz izoh qoldirmadingiz 📝!",
+                  },
+                ]}
+              >
                 <TextArea
                   rows={3}
                   style={{
@@ -274,7 +312,7 @@ export const Movie = () => {
                           }}
                           className={"text-blue-100"}
                         >
-                          {item.time}
+                          {item.created_at?.slice(0, 10)}
                         </Typography>
                       </div>
                     </Card>

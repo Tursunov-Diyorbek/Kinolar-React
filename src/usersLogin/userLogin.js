@@ -2,15 +2,13 @@ import { Button, Form, Input, Typography } from "antd";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import { useSignIn } from "react-auth-kit";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { json, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { ContextSearch } from "../Contex/context";
 
 export const UserLogin = () => {
-  const [userToken, setUserToken] = useState("");
   const signIn = useSignIn();
   const navigate = useNavigate();
-
-  console.log(userToken);
 
   const onFinish = async (values) => {
     try {
@@ -25,7 +23,7 @@ export const UserLogin = () => {
         authState: { username: values.username },
       });
       localStorage.setItem("tokens", data.tokens.access);
-      setUserToken(data.tokens.access);
+      localStorage.setItem("user", JSON.stringify(data.user));
       navigate("/");
     } catch (e) {
       console.log(e);
@@ -87,6 +85,7 @@ export const UserLogin = () => {
                 htmlType={"submit"}
                 type={"primary"}
                 className={"bg-blue-700"}
+                // loading
               >
                 Yuborish
               </Button>

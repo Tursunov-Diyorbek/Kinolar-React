@@ -8,7 +8,6 @@ import { Fade } from "react-awesome-reveal";
 import "swiper/css";
 import axios from "axios";
 import { FaTelegram } from "react-icons/fa";
-
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -18,6 +17,13 @@ import { Menu } from "../Menu/menu";
 export const Movies = () => {
   const api = useContext(ContextApi);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let token = localStorage.getItem("tokens");
+    if (!token) {
+      return navigate("/royxatdan-otish");
+    }
+  }, []);
 
   // const { data, isLoading, isError, error } = useQuery("movies", () =>
   //   api.get("movies/"),
@@ -369,7 +375,7 @@ export const Movies = () => {
           marginTop: 30,
         }}
       >
-        <Typography className={"text-white text-3xl italic"}>
+        <Typography className={"text-white text-2xl italic"}>
           Last Movies
         </Typography>
         <a
