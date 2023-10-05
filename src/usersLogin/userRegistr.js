@@ -1,8 +1,9 @@
-import { Button, Form, Input, Typography, message } from "antd";
+import { Button, Form, Input, Typography, message, Space } from "antd";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const UserRegistr = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -32,6 +33,22 @@ export const UserRegistr = () => {
     } catch (e) {
       warning();
     }
+  };
+
+  const [loadings, setLoadings] = useState([]);
+  const enterLoading = (index) => {
+    setLoadings((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[index] = true;
+      return newLoadings;
+    });
+    setTimeout(() => {
+      setLoadings((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[index] = false;
+        return newLoadings;
+      });
+    }, 6000);
   };
 
   return (
@@ -81,14 +98,17 @@ export const UserRegistr = () => {
               </Form.Item>
             </label>
             <div className={"flex justify-end mt-5"}>
-              <Button
-                htmlType={"submit"}
-                type={"primary"}
-                className={"bg-blue-700"}
-                // loading
-              >
-                Yuborish
-              </Button>
+              <Space wrap>
+                <Button
+                  htmlType={"submit"}
+                  type={"primary"}
+                  className={"bg-blue-700"}
+                  loading={loadings[0]}
+                  onClick={() => enterLoading(0)}
+                >
+                  Yuborish
+                </Button>
+              </Space>
             </div>
           </Form>
         </div>

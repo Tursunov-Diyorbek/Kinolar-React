@@ -6,11 +6,7 @@ export const api = axios.create({
   timeout: 30 * 1000,
   headers: {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Headers":
-      "Origin, X-Requested-With, Content-Type, Accept",
-    "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE",
+    Authorization: `Bearer ${localStorage.getItem("tokens")}`,
   },
 });
 

@@ -1,14 +1,27 @@
-import { Button, Form, Input, Typography } from "antd";
+import { Button, Form, Input, message, Typography } from "antd";
 import axios from "axios";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useSignIn } from "react-auth-kit";
-import { json, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
-import { ContextSearch } from "../Contex/context";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const UserLogin = () => {
   const signIn = useSignIn();
   const navigate = useNavigate();
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const error = () => {
+    messageApi.open({
+      type: "warning",
+      content: "Kirishga ruxsat yo'q malumotlarni to'g'ri kiriting ⚠️!",
+    });
+  };
+
+  const open = () => {
+    toast.success("Sizga maroqli xordiq tilaymiz 🍿🎬", {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  };
 
   const onFinish = async (values) => {
     try {
@@ -24,15 +37,33 @@ export const UserLogin = () => {
       });
       localStorage.setItem("tokens", data.tokens.access);
       localStorage.setItem("user", JSON.stringify(data.user));
+      open();
       navigate("/");
     } catch (e) {
-      console.log(e);
+      error();
     }
+  };
+
+  const [loadings, setLoadings] = useState([]);
+  const enterLoading = (index) => {
+    setLoadings((prevLoadings) => {
+      const newLoadings = [...prevLoadings];
+      newLoadings[index] = true;
+      return newLoadings;
+    });
+    setTimeout(() => {
+      setLoadings((prevLoadings) => {
+        const newLoadings = [...prevLoadings];
+        newLoadings[index] = false;
+        return newLoadings;
+      });
+    }, 4000);
   };
 
   return (
     <>
       <ToastContainer />
+      {contextHolder}
       <div
         className={"flex justify-center items-center h-[100vh]"}
         style={{
@@ -85,7 +116,8 @@ export const UserLogin = () => {
                 htmlType={"submit"}
                 type={"primary"}
                 className={"bg-blue-700"}
-                // loading
+                loading={loadings[0]}
+                onClick={() => enterLoading(0)}
               >
                 Yuborish
               </Button>

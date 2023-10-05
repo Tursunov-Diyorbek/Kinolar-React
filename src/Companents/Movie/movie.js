@@ -1,65 +1,59 @@
 import { useNavigate, useParams } from "react-router-dom";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { ContextApi } from "../../Api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Button, Col, Row, Typography, Form, Input, message, Card } from "antd";
 import {
-  BsHeart,
-  BsHeartbreak,
-  BsHeartFill,
-  BsHeartbreakFill,
-  BsDownload,
-} from "react-icons/bs";
+  Button,
+  Col,
+  Row,
+  Typography,
+  Form,
+  message,
+  Card,
+  Space,
+  Spin,
+} from "antd";
+import { BsDownload } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
-import { FcDislike, FcLike } from "react-icons/fc";
+import { SlLike, SlDislike } from "react-icons/sl";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
-import axios from "axios";
 
 export const Movie = () => {
-  const { id } = useParams();
   const api = useContext(ContextApi);
+  const { movie } = useParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [infoFilm, setInfoFilm] = useState("");
-  const [like, setLike] = useState(false);
   const [form] = Form.useForm();
 
   let userData = JSON.parse(localStorage.getItem("user"));
 
-  // const { data, isLoading, isError, error } = useQuery(["kinolar", id], () =>
-  //   api.get(`/kinolar/${id}`),
-  // );
-  // const kino = useMemo(() => data?.data || { messages: [] }, [data?.data]);
+  const { data, isLoading, isError, error } = useQuery(["movies", movie], () =>
+    api.get(`movies/${movie}/`),
+  );
+  const filterMovie = useMemo(
+    () => data?.data || { messages: [] },
+    [data?.data],
+  );
 
-  // const {
-  //   mutate: putFilm,
-  //   isLoading: isLoadingPut,
-  //   isError: isErrorPut,
-  // } = useMutation(
-  //   (newMessage) => {
-  //     return api.put(`/kinolar/${id}`, newMessage);
-  //   },
-  //   {
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries(["kinolar", id]);
-  //     },
-  //   },
-  // );
-
-  const [filterMovie, setFilterMovie] = useState({});
-  const { movie } = useParams();
-
-  useEffect(() => {
-    try {
-      axios
-        .get(`https://kinolaruz.pythonanywhere.com/movies/${movie}/`)
-        .then((res) => setFilterMovie(res?.data))
-        .catch((err) => console.log(err));
-    } catch (error) {
-      console.error("Serverdan ma'lumotlarni olishda xatolik:", error);
-    }
-  }, []);
+  const {
+    mutate: putFilm,
+    isLoading: isLoadingPut,
+    isError: isErrorPut,
+  } = useMutation(
+    (newMessage) => {
+      return api.post(
+        `movies/movies/${filterMovie.id}/reviews-create/`,
+        newMessage,
+      );
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["movies", movie]);
+      },
+    },
+  );
 
   const [messageApi, contextHolder] = message.useMessage();
   const success = () => {
@@ -70,60 +64,47 @@ export const Movie = () => {
   };
 
   const saveMessages = async (values) => {
-    try {
-      // const updatedMoviePut = {
-      //   ...filterMovie,
-      //   reviews: [
-      //     { ...values, time: dayjs(new Date()).format("YYYY.MM.DD HH:mm") },
-      //     ...(filterMovie?.reviews || []),
-      //   ],
-      // };
-
-      const response = await axios.post(
-        `https://kinolaruz.pythonanywhere.com/movies/movies/${filterMovie.id}/reviews-create/`,
-        {
-          ...values,
-          full_name: userData.username,
-        },
-      );
-      success();
-      try {
-        axios
-          .get(`https://kinolaruz.pythonanywhere.com/movies/${movie}/`)
-          .then((res) => setFilterMovie(res?.data))
-          .catch((err) => console.log(err));
-        form.resetFields();
-      } catch (error) {
-        console.error("Serverdan ma'lumotlarni olishda xatolik:", error);
-      }
-    } catch (error) {
-      console.error("Ma'lumotni saqlashda xatolik:", error);
-    }
+    putFilm({
+      ...values,
+      full_name: userData.username,
+    });
+    success();
+    form.resetFields();
   };
 
-  const UserLike = async () => {
-    axios
-      .post(
-        `https://kinolaruz.pythonanywhere.com/movies/${filterMovie.id}/like`,
-      )
-      .then((res) => console.log(res));
-    setLike(true);
+  const { mutate: movieLike } = useMutation(
+    () => {
+      return api.post(`movies/${filterMovie.id}/like`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["movies", movie]);
+      },
+    },
+  );
+
+  const UserLike = () => {
+    movieLike();
   };
 
-  // if (isLoading)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-blue-600 font-bold text-3xl"}>Kuting...</div>
-  //     </div>
-  //   );
-  // if (isError)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-red-700 font-bold text-3xl"}>
-  //         Xatolik yuz berdi {error.message}
-  //       </div>
-  //     </div>
-  //   );
+  if (isLoading)
+    return (
+      <div className={"flex justify-center items-center h-[100vh]"}>
+        <div className="three-body">
+          <div className="three-body__dot"></div>
+          <div className="three-body__dot"></div>
+          <div className="three-body__dot"></div>
+        </div>
+      </div>
+    );
+  if (isError)
+    return (
+      <div className={"flex justify-center items-center h-[100vh]"}>
+        <div className={"text-red-700 font-bold text-3xl"}>
+          Xatolik yuz berdi {error.message}
+        </div>
+      </div>
+    );
 
   return (
     <>
@@ -155,13 +136,13 @@ export const Movie = () => {
             <div
               className={"flex items-center gap-3  cursor-pointer text-white"}
             >
-              {like ? (
+              {filterMovie.liked ? (
                 <Typography className={"text-2xl"}>
-                  <FcLike style={{ color: "red" }} onClick={UserLike} />
+                  <SlLike style={{ color: "red" }} onClick={UserLike} />
                 </Typography>
               ) : (
                 <Typography className={"text-2xl"}>
-                  <FcDislike style={{ color: "red" }} onClick={UserLike} />
+                  <SlDislike style={{ color: "#fff" }} onClick={UserLike} />
                 </Typography>
               )}
               <Typography className={"text-2xl text-white"}>
@@ -220,18 +201,6 @@ export const Movie = () => {
                 </Typography>
               </div>
             </div>
-            {/*<details className={"my-2"}>*/}
-            {/*  <summary*/}
-            {/*    className={*/}
-            {/*      "font-bold cursor-pointer bg-[#272727] border-2 rounded-2xl inline-block py-3 my-5 px-10"*/}
-            {/*    }*/}
-            {/*  >*/}
-            {/*    Kino tavsifi*/}
-            {/*  </summary>*/}
-            {/*  <Typography className={"text-white"}>*/}
-            {/*    {filterMovie.description}*/}
-            {/*  </Typography>*/}
-            {/*</details>*/}
             <div
               onClick={() =>
                 infoFilm === "" ? setInfoFilm("active") : setInfoFilm("")
@@ -312,7 +281,9 @@ export const Movie = () => {
                           }}
                           className={"text-blue-100"}
                         >
-                          {item.created_at?.slice(0, 10)}
+                          {item.created_at
+                            ? dayjs(item.created_at).format("YYYY.MM.DD HH:mm")
+                            : ""}
                         </Typography>
                       </div>
                     </Card>

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Typography } from "antd";
 import { ContextSearch } from "../../Contex/context";
 import { useNavigate } from "react-router-dom";
-import { FaRegistered } from "react-icons/fa";
+import { ImExit } from "react-icons/im";
 import axios from "axios";
 
 export const Menu = () => {
@@ -38,11 +38,12 @@ export const Menu = () => {
         <Button
           onClick={() => {
             navigate("/royxatdan-otish");
-            localStorage.clear();
+            localStorage.removeItem("tokens");
+            localStorage.removeItem("user");
           }}
           className={"flex items-center text-white gap-2"}
         >
-          <FaRegistered style={{ color: "#fff" }} /> Register
+          <ImExit style={{ color: "#fff" }} /> Chiqish
         </Button>
       </div>
       <div className={"mb-10 flex flex-wrap gap-4 px-5"}>

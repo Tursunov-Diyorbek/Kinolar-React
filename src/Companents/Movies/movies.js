@@ -1,8 +1,6 @@
-import React, { useContext, useMemo, useState, useEffect } from "react";
-import { ContextApi } from "../../Api";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
-import { Form, Input, Typography } from "antd";
+import { Typography } from "antd";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Fade } from "react-awesome-reveal";
 import "swiper/css";
@@ -13,9 +11,9 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Menu } from "../Menu/menu";
+import { ToastContainer } from "react-toastify";
 
 export const Movies = () => {
-  const api = useContext(ContextApi);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,29 +22,6 @@ export const Movies = () => {
       return navigate("/royxatdan-otish");
     }
   }, []);
-
-  // const { data, isLoading, isError, error } = useQuery("movies", () =>
-  //   api.get("movies/"),
-  // );
-  //
-  // console.log(data);
-  //
-  // // const newFilms = useMemo(() => , [])
-  //
-  // if (isLoading)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-blue-600 font-bold text-3xl"}>Kuting...</div>
-  //     </div>
-  //   );
-  // if (isError)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-red-700 font-bold text-3xl"}>
-  //         Xatolik yuz berdi {error.message}
-  //       </div>
-  //     </div>
-  //   );
 
   const [newFilms, setNewFilms] = useState([]);
 
@@ -63,15 +38,6 @@ export const Movies = () => {
 
   //Categoriyalar
 
-  // const { data, isLoading, isError, error } = useQuery("kinolar", () =>
-  //   api.get("/kinolar"),
-  // );
-  //
-  // const movies = useMemo(() => data?.data || [], [data?.data]);
-
-  // const movieFilter = movies.map((item) =>
-  //   item.name.toLowerCase().includes(search.toLowerCase()),
-  // );
   const [translationMovies, setTranslationMovies] = useState([]);
   const [ujasMovies, setUasMovies] = useState([]);
   const [comedyMovies, setComedyMovies] = useState([]);
@@ -101,6 +67,7 @@ export const Movies = () => {
 
   return (
     <>
+      <ToastContainer />
       <Menu />
       <Swiper
         spaceBetween={30}
