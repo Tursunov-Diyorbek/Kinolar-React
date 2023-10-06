@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Typography } from "antd";
+import { Button, Drawer, Form, Input, Modal, Typography } from "antd";
 import { ContextSearch } from "../../Contex/context";
 import { useNavigate } from "react-router-dom";
 import { ImExit } from "react-icons/im";
+import { AiOutlineMenuFold } from "react-icons/ai";
 import axios from "axios";
 
 export const Menu = () => {
@@ -23,6 +24,10 @@ export const Menu = () => {
     navigate("/qidiruv");
   };
 
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => setOpen(true);
+  const onClose = () => setOpen(false);
+
   return (
     <>
       <div className={"py-8 px-5 flex justify-between items-center"}>
@@ -35,28 +40,44 @@ export const Menu = () => {
             />
           </Form.Item>
         </Form>
-        <Button
-          onClick={() => {
-            navigate("/royxatdan-otish");
-            localStorage.removeItem("tokens");
-            localStorage.removeItem("user");
-          }}
-          className={"flex items-center text-white gap-2"}
-        >
-          <ImExit style={{ color: "#fff" }} /> Chiqish
+        <Button onClick={showDrawer} className={"text-white"}>
+          <AiOutlineMenuFold />
         </Button>
       </div>
-      <div className={"mb-10 flex flex-wrap gap-4 px-5"}>
-        {categorys.map((item, index) => (
-          <Button
-            key={index}
-            className={"text-white"}
-            onClick={() => navigate(`/filtr/${item.slug}`)}
-          >
-            {item.name}
-          </Button>
-        ))}
-      </div>
+      <Drawer
+        title="Bo'limlar"
+        placement="right"
+        onClose={onClose}
+        open={open}
+        style={{ background: "rgb(39, 39, 39)", color: "#fff" }}
+      >
+        <div className={"flex flex-col h-[100%] justify-between"}>
+          <div>
+            {categorys.map((item, index) => (
+              <div
+                key={index}
+                className={"p-2 px-5 cursor-pointer categor rounded-2xl"}
+                onClick={() => navigate(`/filtr/${item.slug}`)}
+              >
+                <span>{item.name}</span>
+              </div>
+            ))}
+          </div>
+          <div>
+            <Button
+              onClick={() => {
+                navigate("/royxatdan-otish");
+                localStorage.removeItem("tokens");
+                localStorage.removeItem("user");
+              }}
+              className={"flex items-center gap-2"}
+              danger
+            >
+              <ImExit style={{ color: "red" }} /> Chiqish
+            </Button>
+          </div>
+        </div>
+      </Drawer>
     </>
   );
 };
