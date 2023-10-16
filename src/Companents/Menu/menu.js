@@ -66,7 +66,7 @@ export const Menu = () => {
           <div>
             <Button
               onClick={() => {
-                navigate("/royxatdan-otish");
+                window.location.href = "/";
                 localStorage.removeItem("tokens");
                 localStorage.removeItem("user");
               }}

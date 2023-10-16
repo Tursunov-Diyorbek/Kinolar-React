@@ -16,13 +16,6 @@ import { ToastContainer } from "react-toastify";
 export const Movies = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    let token = localStorage.getItem("tokens");
-    if (!token) {
-      return navigate("/royxatdan-otish");
-    }
-  }, []);
-
   const [newFilms, setNewFilms] = useState([]);
 
   useEffect(() => {

@@ -29,7 +29,7 @@ export const UserRegistr = () => {
         values,
       );
       postReg();
-      navigate("/kirish");
+      navigate("/auth/kirish");
     } catch (e) {
       warning();
     }

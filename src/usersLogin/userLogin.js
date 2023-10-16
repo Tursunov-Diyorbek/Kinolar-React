@@ -4,10 +4,13 @@ import { toast, ToastContainer } from "react-toastify";
 import { useSignIn } from "react-auth-kit";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { ContextApi } from "../Api";
+import { useContext } from "react";
 
 export const UserLogin = () => {
   const signIn = useSignIn();
   const navigate = useNavigate();
+  const { setApi } = useContext(ContextApi);
 
   const [messageApi, contextHolder] = message.useMessage();
   const error = () => {
@@ -38,7 +41,7 @@ export const UserLogin = () => {
       localStorage.setItem("tokens", data.tokens.access);
       localStorage.setItem("user", JSON.stringify(data.user));
       open();
-      navigate("/");
+      window.location.href = "/";
     } catch (e) {
       error();
     }
@@ -109,7 +112,10 @@ export const UserLogin = () => {
               </Form.Item>
             </label>
             <div className={"flex items-center justify-between mt-5"}>
-              <Button type="link" onClick={() => navigate("/royxatdan-otish")}>
+              <Button
+                type="link"
+                onClick={() => navigate("/auth/royxatdan-otish")}
+              >
                 Register
               </Button>
               <Button

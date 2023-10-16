@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import "../Style/style.css";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { api, ContextApi } from "../Api";
+import { ContextApi, api } from "../Api";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Movie } from "../Companents/Movie/movie";
 import { UserRegistr } from "../usersLogin/userRegistr";
@@ -13,11 +13,14 @@ import { Movies } from "../Companents/Movies/movies";
 import { SearchMovies } from "../Companents/Movie/search";
 import { ContextSearch } from "../Contex/context";
 import { FilterKinolar } from "../Companents/Movie/filterKinolar";
+import AuthProtectedRoute from "../auth/auth-protected";
 
 const queryClient = new QueryClient({});
 
 function App() {
   const [searchMovies, setSearchMovies] = useState("");
+
+  const tok = localStorage.getItem("tokens");
 
   return (
     <AuthProvider
@@ -29,23 +32,30 @@ function App() {
       }
     >
       <QueryClientProvider client={queryClient}>
-        <ContextApi.Provider value={api}>
+        <ContextApi.Provider value={{ api }}>
           <ContextSearch.Provider value={{ searchMovies, setSearchMovies }}>
             <Routes>
-              <Route path={"/royxatdan-otish"} element={<UserRegistr />} />
+              {/*AUTH*/}
+
               <Route
-                path={"*"}
-                element={<Navigate to={"/royxatdan-otish"} />}
-              ></Route>
-              <Route
-                path={"/"}
-                element={
-                  <RequireAuth loginPath={"/kirish"}>
-                    <Movies />
-                  </RequireAuth>
-                }
+                path=""
+                element={tok ? <Movies /> : <Navigate to="/auth" />}
               />
-              <Route path={"/kirish"} element={<UserLogin />}></Route>
+              <Route
+                path="auth"
+                element={<AuthProtectedRoute allowed={!tok} redirectURL="/" />}
+              >
+                <Route path={"kirish"} element={<UserLogin />}></Route>
+                <Route path={"royxatdan-otish"} element={<UserRegistr />} />
+                <Route
+                  path="*"
+                  index
+                  element={<Navigate to="/auth/kirish" />}
+                />
+              </Route>
+
+              {/*Movies*/}
+
               <Route path={"/:movie"} element={<Movie />}></Route>
               <Route path={"/qidiruv"} element={<SearchMovies />}></Route>
               <Route

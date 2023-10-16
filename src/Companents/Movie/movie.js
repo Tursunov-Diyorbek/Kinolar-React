@@ -1,23 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useContext, useMemo, useState } from "react";
-import { ContextApi } from "../../Api";
+import { ContextApi } from "../../Api/index";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import {
-  Button,
-  Col,
-  Row,
-  Typography,
-  Form,
-  message,
-  Card,
-  Space,
-  Spin,
-} from "antd";
+import { Button, Col, Row, Typography, Form, message, Card } from "antd";
 import { BsDownload } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { SlLike, SlDislike } from "react-icons/sl";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
+import axios from "axios";
 
 export const Movie = () => {
   const api = useContext(ContextApi);
@@ -30,8 +21,9 @@ export const Movie = () => {
   let userData = JSON.parse(localStorage.getItem("user"));
 
   const { data, isLoading, isError, error } = useQuery(["movies", movie], () =>
-    api.get(`movies/${movie}/`),
+    axios.get(`https://kinolaruz.pythonanywhere.com/movies/${movie}/`),
   );
+
   const filterMovie = useMemo(
     () => data?.data || { messages: [] },
     [data?.data],
@@ -43,8 +35,8 @@ export const Movie = () => {
     isError: isErrorPut,
   } = useMutation(
     (newMessage) => {
-      return api.post(
-        `movies/movies/${filterMovie.id}/reviews-create/`,
+      return axios.post(
+        `https://kinolaruz.pythonanywhere.com/movies/movies/${filterMovie.id}/reviews-create/`,
         newMessage,
       );
     },
@@ -73,9 +65,16 @@ export const Movie = () => {
   };
 
   const { mutate: movieLike } = useMutation(
-    () => {
-      return api.post(`movies/${filterMovie.id}/like`);
-    },
+    () =>
+      axios.post(
+        `https://kinolaruz.pythonanywhere.com/movies/${filterMovie.id}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("tokens")}`,
+          },
+        },
+      ),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["movies", movie]);
@@ -236,7 +235,7 @@ export const Movie = () => {
               }
               className={"overflow-hidden cursor-pointer mt-5 readmore"}
               style={{
-                height: infoFilm === "active" ? "auto" : 55,
+                height: infoFilm === "active" ? "auto" : 45,
               }}
             >
               {filterMovie.description}
@@ -252,7 +251,7 @@ export const Movie = () => {
         >
           <Form onFinish={saveMessages} className={"w-[100%]"} form={form}>
             <label>
-              <Typography className={"text-white mt-2"}>
+              <Typography className={"text-gray-500 mt-2"}>
                 Izohingizni qoldiring 📝
               </Typography>
               <Form.Item
@@ -268,7 +267,8 @@ export const Movie = () => {
                   rows={3}
                   style={{
                     background: "none",
-                    color: "#fff",
+                    color: "gray",
+                    border: "1px solid gray",
                   }}
                 />
               </Form.Item>
@@ -284,7 +284,7 @@ export const Movie = () => {
             </div>
           </Form>
           <div>
-            <Typography className={"text-white text-center my-2"}>
+            <Typography className={"text-gray-500 text-center my-2"}>
               Izohlar
             </Typography>
             <div style={{ maxHeight: 678, overflowY: "scroll" }}>
@@ -294,7 +294,9 @@ export const Movie = () => {
                     <Card
                       className={"p-1 bg-[#333333] border-0"}
                       title={
-                        <span className={"flex items-center gap-1 text-white"}>
+                        <span
+                          className={"flex items-center gap-1 text-gray-400"}
+                        >
                           <FaUser /> {item.full_name}
                         </span>
                       }
