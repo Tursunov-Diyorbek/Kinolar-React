@@ -2,13 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import React, { useContext, useMemo, useState } from "react";
 import { ContextApi } from "../../Api/index";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Button, Col, Row, Typography, Form, message, Card } from "antd";
+import { Button, Col, Row, Typography, Form, message, Card, Input } from "antd";
 import { BsDownload } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { SlLike, SlDislike } from "react-icons/sl";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import axios from "axios";
+import styles from "./index.module.sass";
 
 export const Movie = () => {
   const api = useContext(ContextApi);
@@ -17,11 +18,12 @@ export const Movie = () => {
   const navigate = useNavigate();
   const [infoFilm, setInfoFilm] = useState("");
   const [form] = Form.useForm();
+  const nowDate = new Date();
 
   let userData = JSON.parse(localStorage.getItem("user"));
 
   const { data, isLoading, isError, error } = useQuery(["movies", movie], () =>
-    axios.get(`https://kinolaruz.pythonanywhere.com/movies/${movie}/`),
+    axios.get(`http://localhost:3004/kinolar?slug=${movie}`),
   );
 
   const filterMovie = useMemo(
@@ -56,35 +58,31 @@ export const Movie = () => {
   };
 
   const saveMessages = async (values) => {
-    putFilm({
-      ...values,
-      full_name: userData.username,
-    });
+    // putFilm({
+    //   ...values,
+    //   full_name: userData.username,
+    // });
     success();
     form.resetFields();
   };
 
-  const { mutate: movieLike } = useMutation(
-    () =>
-      axios.post(
-        `https://kinolaruz.pythonanywhere.com/movies/${filterMovie.id}/like`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("tokens")}`,
-          },
-        },
-      ),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["movies", movie]);
-      },
-    },
-  );
-
-  const UserLike = () => {
-    movieLike();
-  };
+  // const { mutate: movieLike } = useMutation(
+  //   () =>
+  //     axios.post(
+  //       `https://kinolaruz.pythonanywhere.com/movies/${filterMovie.id}/like`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("tokens")}`,
+  //         },
+  //       },
+  //     ),
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries(["movies", movie]);
+  //     },
+  //   },
+  // );
 
   if (isLoading)
     return (
@@ -114,7 +112,7 @@ export const Movie = () => {
             width="20"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g stroke="#ff342b" stroke-linecap="round" stroke-width="1.5">
+            <g stroke="#ff342b" strokeLinecap="round" strokeWidth="1.5">
               <path d="m3.33337 10.8333c0 3.6819 2.98477 6.6667 6.66663 6.6667 3.682 0 6.6667-2.9848 6.6667-6.6667 0-3.68188-2.9847-6.66664-6.6667-6.66664-1.29938 0-2.51191.37174-3.5371 1.01468"></path>
               <path d="m7.69867 1.58163-1.44987 3.28435c-.18587.42104.00478.91303.42582 1.0989l3.28438 1.44986"></path>
             </g>
@@ -135,13 +133,13 @@ export const Movie = () => {
           className={"pe-3"}
         >
           <video
-            src={filterMovie.video_url}
+            src={filterMovie[0].video_url}
             style={{ width: "100%", maxHeight: 550, borderRadius: 5 }}
             controls
-            poster={filterMovie.poster_url}
+            poster={filterMovie[0].img_url}
           ></video>
           <div className={"flex justify-between items-center"}>
-            <a href={filterMovie.video_url} download>
+            <a href={filterMovie[0].video_url} download>
               <Button
                 className={
                   "bg-[#272727] rounded-3xl my-3 flex text-white gap-1"
@@ -152,74 +150,70 @@ export const Movie = () => {
               </Button>
             </a>
             <div
-              className={"flex items-center gap-3  cursor-pointer text-white"}
+              className={"flex items-center gap-3 cursor-pointer text-white"}
             >
-              {filterMovie.liked ? (
-                <Typography className={"text-2xl"}>
-                  <SlLike style={{ color: "red" }} onClick={UserLike} />
-                </Typography>
-              ) : (
-                <Typography className={"text-2xl"}>
-                  <SlDislike style={{ color: "#fff" }} onClick={UserLike} />
-                </Typography>
-              )}
-              <Typography className={"text-2xl text-white"}>
-                {filterMovie.num_likes}
+              <Typography className={"text-2xl"}>
+                <SlLike style={{ color: "#fff" }} />
               </Typography>
+              <span>752</span>|
+              <Typography className={"text-2xl"}>
+                <SlDislike style={{ color: "#fff" }} />
+              </Typography>
+              <span>45</span>
             </div>
           </div>
           <div className={"bg-[#272727] p-2 mb-4"} style={{ borderRadius: 5 }}>
             <div className={"flex"}>
               <div className={"w-[200px] h-[100%]"}>
                 <img
-                  src={filterMovie.img_url}
+                  src={filterMovie[0].img_url}
                   alt="rasm"
                   style={{ borderRadius: 5 }}
                 />
               </div>
               <div className={"ms-3"}>
-                <div className={"text-white flex"}>
-                  <Typography className={"text-[#a5bbdc] font-bold w-[130px]"}>
+                <div className={`text-white ${styles.media}`}>
+                  <Typography className={`text-[#a5bbdc] font-bold`}>
                     Kino nomi:
                   </Typography>
-                  {filterMovie.name}
+                  {filterMovie[0].name}
                 </div>
-                <div className={"text-white mt-1 flex"}>
-                  <Typography className={"text-[#a5bbdc] font-bold w-[130px]"}>
+                <div className={styles.media}>
+                  <Typography className={"text-[#a5bbdc] font-bold"}>
                     Joylandi:
                   </Typography>
-                  {filterMovie.created_at?.slice(0, 10)}
+                  {dayjs(nowDate).format("DD - MMMM - YYYY")}
                 </div>
-                <div className={"text-white mt-1 flex"}>
-                  <Typography className={"text-[#a5bbdc] font-bold w-[130px]"}>
+                <div className={styles.media}>
+                  <Typography className={"text-[#a5bbdc] font-bold"}>
                     Yil:{" "}
                   </Typography>
-                  {filterMovie.movie_year}
+                  {filterMovie[0].movie_year}
                 </div>
-                <div className={"text-white mt-1 flex"}>
-                  <Typography className={"text-[#a5bbdc] font-bold w-[130px]"}>
+                <div className={styles.media}>
+                  <Typography className={"text-[#a5bbdc] font-bold"}>
                     Davomiyligi:{" "}
                   </Typography>
-                  {filterMovie.duration}
+                  {filterMovie[0].duration}
                 </div>
-                <div className={"text-white mt-1 flex"}>
-                  <Typography className={"text-[#a5bbdc] font-bold w-[130px]"}>
+                <div className={styles.media}>
+                  <Typography className={"text-[#a5bbdc] font-bold"}>
                     Mamlakat:{" "}
                   </Typography>
-                  {filterMovie.country}
+                  {filterMovie[0].country}
                 </div>
-                <div className={"text-white mt-1 flex"}>
-                  <Typography className={"text-[#a5bbdc] font-bold w-[130px]"}>
+                <div className={styles.media}>
+                  <Typography className={"text-[#a5bbdc] font-bold"}>
                     Janr:{" "}
                   </Typography>
-                  <div>
-                    {filterMovie.category?.map((item, index) => {
+                  <div className={styles.media}>
+                    {filterMovie[0].category?.map((item, index) => {
                       return (
                         <Button
                           key={index}
                           type={"link"}
-                          onClick={() => navigate(`/filtr/${item.slug}`)}
-                          className={"p-0 me-5"}
+                          onClick={() => navigate(`/filter/${item.slug}`)}
+                          className={styles.media}
                         >
                           {item.name},
                         </Button>
@@ -233,12 +227,12 @@ export const Movie = () => {
               onClick={() =>
                 infoFilm === "" ? setInfoFilm("active") : setInfoFilm("")
               }
-              className={"overflow-hidden cursor-pointer mt-5 readmore"}
+              className={`overflow-hidden cursor-pointer mt-5 readmore ${styles.media}`}
               style={{
                 height: infoFilm === "active" ? "auto" : 45,
               }}
             >
-              {filterMovie.description}
+              {filterMovie[0].description}
             </div>
           </div>
         </Col>
@@ -251,6 +245,26 @@ export const Movie = () => {
         >
           <Form onFinish={saveMessages} className={"w-[100%]"} form={form}>
             <label>
+              <Typography className={"text-gray-500 mt-2"}>
+                Ismingizni kiriting 📝
+              </Typography>
+              <Form.Item
+                name={"name"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Kechirasiz ismingizni yozmadingiz 📝!",
+                  },
+                ]}
+              >
+                <Input
+                  style={{
+                    background: "none",
+                    color: "gray",
+                    border: "1px solid gray",
+                  }}
+                />
+              </Form.Item>
               <Typography className={"text-gray-500 mt-2"}>
                 Izohingizni qoldiring 📝
               </Typography>
@@ -288,7 +302,7 @@ export const Movie = () => {
               Izohlar
             </Typography>
             <div style={{ maxHeight: 678, overflowY: "scroll" }}>
-              {filterMovie.reviews?.map((item, index) => {
+              {filterMovie[0].reviews?.map((item, index) => {
                 return (
                   <div key={index} className={"p-1"}>
                     <Card

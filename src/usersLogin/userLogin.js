@@ -27,27 +27,31 @@ export const UserLogin = () => {
   };
 
   const onFinish = async (values) => {
-    try {
-      const { data } = await axios.post(
-        `https://kinolaruz.pythonanywhere.com/users/login/`,
-        values,
-      );
-      signIn({
-        token: data.token,
-        expiresIn: 3600,
-        tokenType: "Bearer",
-        authState: { username: values.username },
-      });
-      localStorage.setItem("tokens", data.tokens.access);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      open();
-      window.location.href = "/";
-    } catch (e) {
-      error();
-    }
+    localStorage.setItem("tokens", "Token");
+    window.location.reload();
+    // navigate("/");
+    // try {
+    //   const { data } = await axios.post(
+    //     `https://kinolaruz.pythonanywhere.com/users/login/`,
+    //     values,
+    //   );
+    //   signIn({
+    //     token: data.token,
+    //     expiresIn: 3600,
+    //     tokenType: "Bearer",
+    //     authState: { username: values.username },
+    //   });
+    //   localStorage.setItem("tokens", data.tokens.access);
+    //   localStorage.setItem("user", JSON.stringify(data.user));
+    //   open();
+    //   window.location.href = "/";
+    // } catch (e) {
+    //   error();
+    // }
   };
 
   const [loadings, setLoadings] = useState([]);
+
   const enterLoading = (index) => {
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];

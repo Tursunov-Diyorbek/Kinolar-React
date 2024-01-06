@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Drawer, Form, Input, Modal, Typography } from "antd";
+import { Button, Drawer, Form, Input } from "antd";
 import { ContextSearch } from "../../Contex/context";
 import { useNavigate } from "react-router-dom";
 import { ImExit } from "react-icons/im";
@@ -14,7 +14,7 @@ export const Menu = () => {
 
   useEffect(() => {
     axios
-      .get("https://kinolaruz.pythonanywhere.com/category/")
+      .get("http://localhost:3004/category")
       .then((res) => setCategorys(res?.data))
       .catch((err) => console.log(err));
   }, []);
@@ -34,7 +34,7 @@ export const Menu = () => {
         <Form onFinish={onSearch}>
           <Form.Item name="search" className={"m-0"}>
             <Input
-              placeholder={"Qidirish..."}
+              placeholder={"Qidirish... (lar ishlatmang)"}
               size={"large"}
               className={"bg-[#131A20] border-0 text-white ant-input-login"}
             />
@@ -49,6 +49,7 @@ export const Menu = () => {
         placement="right"
         onClose={onClose}
         open={open}
+        width={300}
         style={{ background: "rgb(39, 39, 39)", color: "#fff" }}
       >
         <div className={"flex flex-col h-[100%] justify-between"}>
@@ -57,7 +58,7 @@ export const Menu = () => {
               <div
                 key={index}
                 className={"p-2 px-5 cursor-pointer categor rounded-2xl"}
-                onClick={() => navigate(`/filtr/${item.slug}`)}
+                onClick={() => navigate(`/filter/${item.slug}`)}
               >
                 <span>{item.name}</span>
               </div>
@@ -70,7 +71,7 @@ export const Menu = () => {
                 localStorage.removeItem("tokens");
                 localStorage.removeItem("user");
               }}
-              className={"flex items-center gap-2"}
+              className={"flex items-center gap-2 w-[100%] justify-center"}
               danger
             >
               <ImExit style={{ color: "red" }} /> Chiqish

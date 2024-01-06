@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Movie } from "../Companents/Movie/movie";
 import { UserRegistr } from "../usersLogin/userRegistr";
 import { UserLogin } from "../usersLogin/userLogin";
-import { RequireAuth } from "react-auth-kit";
 import { AuthProvider } from "react-auth-kit";
 import { Movies } from "../Companents/Movies/movies";
 import { SearchMovies } from "../Companents/Movie/search";
@@ -27,9 +26,7 @@ function App() {
       authType={"cookie"}
       authName={"_auth"}
       cookieDomain={window.location.hostname}
-      cookieSecure={
-        window.location.protocol === "https://kinolaruz.pythonanywhere.com/"
-      }
+      cookieSecure={window.location.protocol === "http://localhost:3004/"}
     >
       <QueryClientProvider client={queryClient}>
         <ContextApi.Provider value={{ api }}>
@@ -59,7 +56,7 @@ function App() {
               <Route path={"/:movie"} element={<Movie />}></Route>
               <Route path={"/qidiruv"} element={<SearchMovies />}></Route>
               <Route
-                path={"/filtr/:filterFilms"}
+                path={"/filter/:filterFilms"}
                 element={<FilterKinolar />}
               ></Route>
             </Routes>

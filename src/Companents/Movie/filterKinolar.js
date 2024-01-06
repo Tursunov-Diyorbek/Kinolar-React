@@ -1,8 +1,6 @@
-import { FcLeft } from "react-icons/fc";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pagination, Col, Row, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
 import { ContextApi } from "../../Api";
 import { Fade } from "react-awesome-reveal";
 import axios from "axios";
@@ -15,37 +13,20 @@ export const FilterKinolar = () => {
   const navigate = useNavigate();
   const { filterFilms } = useParams();
 
-  // const { data, isLoading, isError, error } = useQuery("kinolar", () =>
-  //   api.get("/kinolar"),
-  // );
-  //
-  // const tarjimaKinolar = useMemo(() => data?.data || [], [data?.data]);
-
   useEffect(() => {
     axios
-      .get(`https://kinolaruz.pythonanywhere.com/category/${filterFilms}/`)
-      .then((res) => setFilmsFilter(res.data.results))
+      .get("http://localhost:3004/kinolar")
+      .then((res) => setFilmsFilter(res.data))
       .catch((err) => console.log(err));
-  });
+  }, []);
+
+  const filterMovies = filmsFilter.filter((item) =>
+    item.category.some((item2) => item2.slug.includes(filterFilms)),
+  );
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentFilms = filmsFilter.slice(indexOfFirstPost, indexOfLastPost);
-
-  // if (isLoading)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-blue-600 font-bold text-3xl"}>Kuting...</div>
-  //     </div>
-  //   );
-  // if (isError)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-red-700 font-bold text-3xl"}>
-  //         Xatolik yuz berdi {error.message}
-  //       </div>
-  //     </div>
-  //   );
+  const currentFilms = filterMovies.slice(indexOfFirstPost, indexOfLastPost);
 
   return (
     <>
@@ -97,8 +78,6 @@ export const FilterKinolar = () => {
           total={filmsFilter.length}
           pageSize={postsPerPage}
           onChange={(page) => setCurrentPage(page)}
-          // className={"my-10 text-white"}
-          // style={{ color: "red" }}
         />
       </div>
     </>

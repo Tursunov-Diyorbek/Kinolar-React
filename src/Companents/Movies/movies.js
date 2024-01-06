@@ -20,10 +20,10 @@ export const Movies = () => {
 
   useEffect(() => {
     axios
-      .get("https://kinolaruz.pythonanywhere.com/movies/")
+      .get("http://localhost:3004/kinolar")
       .then((res) => {
-        const films = res?.data.results;
-        const reversedFilms = films.slice(0, 3);
+        const films = res?.data;
+        const reversedFilms = films.reverse().slice(0, 3);
         setNewFilms(reversedFilms);
       })
       .catch((err) => console.log(err));
@@ -38,23 +38,23 @@ export const Movies = () => {
 
   useEffect(() => {
     axios
-      .get("https://kinolaruz.pythonanywhere.com/category/tarjima-kinolar/")
-      .then((res) => setTranslationMovies(res?.data.results))
+      .get("http://localhost:3004/tarjima-kinolar/")
+      .then((res) => setTranslationMovies(res?.data))
       .catch((err) => console.log(err));
 
     axios
-      .get("https://kinolaruz.pythonanywhere.com/category/ujas/")
-      .then((res) => setUasMovies(res?.data.results))
+      .get("http://localhost:3004/ujas/")
+      .then((res) => setUasMovies(res?.data))
       .catch((err) => console.log(err));
 
     axios
-      .get("https://kinolaruz.pythonanywhere.com/category/komediya/")
-      .then((res) => setComedyMovies(res?.data.results))
+      .get("http://localhost:3004/komediya/")
+      .then((res) => setComedyMovies(res?.data))
       .catch((err) => console.log(err));
 
     axios
-      .get("https://kinolaruz.pythonanywhere.com/category/multfilm/")
-      .then((res) => setCartoons(res?.data.results))
+      .get("http://localhost:3004/multfilm/")
+      .then((res) => setCartoons(res?.data))
       .catch((err) => console.log(err));
   }, []);
 
@@ -83,7 +83,7 @@ export const Movies = () => {
                 style={{
                   height: "100%",
                   cursor: "pointer",
-                  backgroundImage: `url(${item.poster_url})`,
+                  backgroundImage: `url(${item.img_url})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center center",
                 }}
@@ -97,7 +97,7 @@ export const Movies = () => {
         className={
           "font-bold text-2xl text-[#a5bbdc] px-3 pb-5 cursor-pointer inline-block mt-10"
         }
-        onClick={() => navigate("/filtr/tarjima-kinolar")}
+        onClick={() => navigate("/filter/tarjima-kino")}
       >
         TARJIMA KINOLAR...
       </Typography>
@@ -118,7 +118,7 @@ export const Movies = () => {
           },
         }}
       >
-        {translationMovies.map((item2, index) => {
+        {translationMovies?.map((item2, index) => {
           return (
             <SwiperSlide key={index} onClick={() => navigate(`/${item2.slug}`)}>
               <Fade duration={1000}>
@@ -155,7 +155,7 @@ export const Movies = () => {
         className={
           "font-bold text-2xl text-[#a5bbdc] px-3 pb-5 cursor-pointer inline-block mt-10"
         }
-        onClick={() => navigate("/filtr/ujas")}
+        onClick={() => navigate("/filter/ujas")}
       >
         UJAS KINOLAR...
       </Typography>
@@ -176,7 +176,7 @@ export const Movies = () => {
           },
         }}
       >
-        {ujasMovies.map((item2, index) => {
+        {ujasMovies?.map((item2, index) => {
           return (
             <SwiperSlide key={index} onClick={() => navigate(`/${item2.slug}`)}>
               <Fade duration={1000}>
@@ -213,7 +213,7 @@ export const Movies = () => {
         className={
           "font-bold text-2xl text-[#a5bbdc] px-3 pb-5 cursor-pointer inline-block mt-10"
         }
-        onClick={() => navigate("/filtr/komediya")}
+        onClick={() => navigate("/filter/komediya")}
       >
         KOMEDIYA KINOLAR...
       </Typography>
@@ -234,7 +234,7 @@ export const Movies = () => {
           },
         }}
       >
-        {comedyMovies.map((item2, index) => {
+        {comedyMovies?.map((item2, index) => {
           return (
             <SwiperSlide key={index} onClick={() => navigate(`/${item2.slug}`)}>
               <Fade duration={1000}>
@@ -271,7 +271,7 @@ export const Movies = () => {
         className={
           "font-bold text-2xl text-[#a5bbdc] px-3 pb-5 cursor-pointer inline-block mt-10"
         }
-        onClick={() => navigate("/filtr/multfilm")}
+        onClick={() => navigate("/filter/multfilm")}
       >
         MULTFILIMLAR...
       </Typography>
@@ -292,7 +292,7 @@ export const Movies = () => {
           },
         }}
       >
-        {cartoons.map((item2, index) => {
+        {cartoons?.map((item2, index) => {
           return (
             <SwiperSlide key={index} onClick={() => navigate(`/${item2.slug}`)}>
               <Fade duration={1000}>

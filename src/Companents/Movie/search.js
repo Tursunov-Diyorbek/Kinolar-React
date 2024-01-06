@@ -1,8 +1,6 @@
-import { FcLeft } from "react-icons/fc";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pagination, Col, Row, Typography } from "antd";
-import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { ContextApi } from "../../Api";
 import { Fade } from "react-awesome-reveal";
 import axios from "axios";
@@ -17,39 +15,30 @@ export const SearchMovies = () => {
   const api = useContext(ContextApi);
   const navigate = useNavigate();
 
-  // const { data, isLoading, isError, error } = useQuery("kinolar", () =>
-  //   api.get("/kinolar"),
-  // );
-  //
-  // const tarjimaKinolar = useMemo(() => data?.data || [], [data?.data]);
+  const searchFilm = searchFilms.filter((item) => {
+    const searchLowerCase = searchMovies.toLowerCase();
+    const yearString = String(item.year).toLowerCase();
+
+    return (
+      item.name.toLowerCase().includes(searchLowerCase) ||
+      item.country.toLowerCase().includes(searchLowerCase) ||
+      yearString.includes(searchLowerCase) ||
+      item.category.filter((item2) =>
+        item2.name.toLowerCase().includes(searchLowerCase),
+      ).length > 0
+    );
+  });
 
   useEffect(() => {
     axios
-      .get(
-        `https://kinolaruz.pythonanywhere.com/search/?search=${searchMovies}`,
-      )
-      .then((res) => setSearchFilms(res.data.results))
+      .get("http://localhost:3004/kinolar")
+      .then((res) => setSearchFilms(res.data))
       .catch((err) => console.log(err));
   }, [searchMovies]);
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentFilms = searchFilms.slice(indexOfFirstPost, indexOfLastPost);
-
-  // if (isLoading)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-blue-600 font-bold text-3xl"}>Kuting...</div>
-  //     </div>
-  //   );
-  // if (isError)
-  //   return (
-  //     <div className={"flex justify-center items-center h-[100vh]"}>
-  //       <div className={"text-red-700 font-bold text-3xl"}>
-  //         Xatolik yuz berdi {error.message}
-  //       </div>
-  //     </div>
-  //   );
+  const currentFilms = searchFilm.slice(indexOfFirstPost, indexOfLastPost);
 
   return (
     <>
@@ -102,8 +91,6 @@ export const SearchMovies = () => {
           total={searchFilms.length}
           pageSize={postsPerPage}
           onChange={(page) => setCurrentPage(page)}
-          // className={"my-10 text-white"}
-          // style={{ color: "red" }}
         />
       </div>
     </>
