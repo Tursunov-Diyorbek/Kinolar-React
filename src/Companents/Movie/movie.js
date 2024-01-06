@@ -23,7 +23,7 @@ export const Movie = () => {
   let userData = JSON.parse(localStorage.getItem("user"));
 
   const { data, isLoading, isError, error } = useQuery(["movies", movie], () =>
-    axios.get(`http://localhost:3004/kinolar?slug=${movie}`),
+    axios.get(`https://last-movies-beckend.onrender.com/kinolar?slug=${movie}`),
   );
 
   const filterMovie = useMemo(

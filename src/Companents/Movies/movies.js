@@ -20,7 +20,7 @@ export const Movies = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3004/kinolar")
+      .get("https://last-movies-beckend.onrender.com/kinolar")
       .then((res) => {
         const films = res?.data;
         const reversedFilms = films.reverse().slice(0, 3);
@@ -38,22 +38,22 @@ export const Movies = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3004/tarjima-kinolar/")
+      .get("https://last-movies-beckend.onrender.com/tarjima-kinolar/")
       .then((res) => setTranslationMovies(res?.data))
       .catch((err) => console.log(err));
 
     axios
-      .get("http://localhost:3004/ujas/")
+      .get("https://last-movies-beckend.onrender.com/ujas")
       .then((res) => setUasMovies(res?.data))
       .catch((err) => console.log(err));
 
     axios
-      .get("http://localhost:3004/komediya/")
+      .get("https://last-movies-beckend.onrender.com/komediya/")
       .then((res) => setComedyMovies(res?.data))
       .catch((err) => console.log(err));
 
     axios
-      .get("http://localhost:3004/multfilm/")
+      .get("https://last-movies-beckend.onrender.com/multfilm/")
       .then((res) => setCartoons(res?.data))
       .catch((err) => console.log(err));
   }, []);

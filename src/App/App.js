@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import "../Style/style.css";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Router } from "react-router-dom";
 import { ContextApi, api } from "../Api";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Movie } from "../Companents/Movie/movie";
@@ -26,7 +26,9 @@ function App() {
       authType={"cookie"}
       authName={"_auth"}
       cookieDomain={window.location.hostname}
-      cookieSecure={window.location.protocol === "http://localhost:3004/"}
+      cookieSecure={
+        window.location.protocol === "https://last-movies-beckend.onrender.com/"
+      }
     >
       <QueryClientProvider client={queryClient}>
         <ContextApi.Provider value={{ api }}>
@@ -34,7 +36,7 @@ function App() {
             <Routes>
               {/*AUTH*/}
 
-              <Route
+              {/* <Route
                 path=""
                 element={tok ? <Movies /> : <Navigate to="/auth" />}
               />
@@ -49,7 +51,8 @@ function App() {
                   index
                   element={<Navigate to="/auth/kirish" />}
                 />
-              </Route>
+              </Route> */}
+              <Route path="/" element={<Movies />} />
 
               {/*Movies*/}
 

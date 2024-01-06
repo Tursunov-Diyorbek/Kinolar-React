@@ -14,7 +14,7 @@ export const Menu = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3004/category")
+      .get("https://last-movies-beckend.onrender.com/category")
       .then((res) => setCategorys(res?.data))
       .catch((err) => console.log(err));
   }, []);
@@ -64,7 +64,7 @@ export const Menu = () => {
               </div>
             ))}
           </div>
-          <div>
+          {/* <div>
             <Button
               onClick={() => {
                 window.location.href = "/";
@@ -76,7 +76,7 @@ export const Menu = () => {
             >
               <ImExit style={{ color: "red" }} /> Chiqish
             </Button>
-          </div>
+          </div> */}
         </div>
       </Drawer>
     </>

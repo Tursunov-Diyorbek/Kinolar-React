@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 
 export const api = axios.create({
-  baseURL: "http://localhost:3004/",
+  baseURL: "https://last-movies-beckend.onrender.com/",
   timeout: 30 * 1000,
   headers: {
     "Content-Type": "application/json",

@@ -31,7 +31,7 @@ export const SearchMovies = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3004/kinolar")
+      .get("https://last-movies-beckend.onrender.com/kinolar")
       .then((res) => setSearchFilms(res.data))
       .catch((err) => console.log(err));
   }, [searchMovies]);

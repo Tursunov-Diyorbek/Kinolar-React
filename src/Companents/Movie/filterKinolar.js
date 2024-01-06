@@ -15,7 +15,7 @@ export const FilterKinolar = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3004/kinolar")
+      .get("https://last-movies-beckend.onrender.com/kinolar")
       .then((res) => setFilmsFilter(res.data))
       .catch((err) => console.log(err));
   }, []);
