@@ -4,11 +4,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ContextApi } from "../../Api";
 import { Fade } from "react-awesome-reveal";
 import axios from "axios";
+import styles from "./index.module.sass";
 
 export const FilterKinolar = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(16);
   const [filmsFilter, setFilmsFilter] = useState([]);
+  const [loading, setLoading] = useState(true);
   const api = useContext(ContextApi);
   const navigate = useNavigate();
   const { filterFilms } = useParams();
@@ -16,7 +18,10 @@ export const FilterKinolar = () => {
   useEffect(() => {
     axios
       .get("https://last-movies-beckend.onrender.com/kinolar")
-      .then((res) => setFilmsFilter(res.data))
+      .then((res) => {
+        setFilmsFilter(res.data);
+        setLoading(false);
+      })
       .catch((err) => console.log(err));
   }, []);
 
@@ -27,6 +32,18 @@ export const FilterKinolar = () => {
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentFilms = filterMovies.slice(indexOfFirstPost, indexOfLastPost);
+
+  if (loading) {
+    return (
+      <div className={"flex justify-center items-center h-[100vh]"}>
+        <div className="three-body">
+          <div className="three-body__dot"></div>
+          <div className="three-body__dot"></div>
+          <div className="three-body__dot"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -50,7 +67,7 @@ export const FilterKinolar = () => {
                 <img
                   src={item.img_url}
                   alt="rasm"
-                  style={{ borderRadius: 5, height: 253, objectFit: "cover" }}
+                  className={styles.filterHeight}
                 />
                 <Fade duration={3000}>
                   <Typography

@@ -49,7 +49,7 @@ export const Menu = () => {
         placement="right"
         onClose={onClose}
         open={open}
-        width={300}
+        width={250}
         style={{ background: "rgb(39, 39, 39)", color: "#fff" }}
       >
         <div className={"flex flex-col h-[100%] justify-between"}>

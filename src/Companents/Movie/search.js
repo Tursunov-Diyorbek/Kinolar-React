@@ -12,6 +12,7 @@ export const SearchMovies = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(16);
   const [searchFilms, setSearchFilms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const api = useContext(ContextApi);
   const navigate = useNavigate();
 
@@ -32,13 +33,28 @@ export const SearchMovies = () => {
   useEffect(() => {
     axios
       .get("https://last-movies-beckend.onrender.com/kinolar")
-      .then((res) => setSearchFilms(res.data))
+      .then((res) => {
+        setSearchFilms(res.data);
+        setLoading(false);
+      })
       .catch((err) => console.log(err));
   }, [searchMovies]);
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentFilms = searchFilm.slice(indexOfFirstPost, indexOfLastPost);
+
+  if (loading) {
+    return (
+      <div className={"flex justify-center items-center h-[100vh]"}>
+        <div className="three-body">
+          <div className="three-body__dot"></div>
+          <div className="three-body__dot"></div>
+          <div className="three-body__dot"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
